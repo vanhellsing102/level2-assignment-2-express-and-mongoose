@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { ProductServices } from "./product.service";
 import productValidation from "./product.validation";
 
-const addProduct = async(req: Request, res: Response): Promise<void> =>{
+const addProduct = async(req: Request, res: Response) =>{
     try {
         const {product} = req.body;
         const validatedProductData = productValidation.safeParse(product);
@@ -27,12 +27,13 @@ const addProduct = async(req: Request, res: Response): Promise<void> =>{
         })
     }
 }
+
 const getAllProducts = async(req: Request, res: Response) =>{
     try{
         const result = await ProductServices.getAllProductsFromDB();
         res.status(200).json({
             success: true,
-            message: "Products retrived successfully",
+            message: "Products fetched successfully",
             data: result
         })
     }catch(error){
@@ -44,7 +45,45 @@ const getAllProducts = async(req: Request, res: Response) =>{
     }
 }
 
+const getSingleProduct = async(req: Request, res: Response) =>{
+    try{
+        const {productId} = req.params;
+        const result = await ProductServices.getSingleProductFromDB(productId);
+        res.status(200).json({
+            success: true,
+            message: "Product fetched successfully",
+            data: result
+        })
+    }catch(error){
+        res.status(500).json({
+            success: false,
+            message: "something went wrong",
+            error: error
+        })
+    }
+}
+
+const updateProduct = async(req: Request, res: Response) =>{
+    try{
+        const {productId} = req.params;
+        const {product} = req.body;
+        const result = await ProductServices.updateProductInDB(productId, product);
+        res.status(200).json({
+            success: true,
+            message: "Product updated successfully",
+            data: result
+        })
+    }catch(error){
+        res.status(500).json({
+            success: false,
+            message: "something went wrong",
+            error: error
+        })
+    }
+}
 export const ProductControllers = {
     addProduct,
     getAllProducts,
+    getSingleProduct,
+    updateProduct
 }

@@ -29,7 +29,7 @@ orderSchema.pre("save", async function(next){
         throw new Error("Product not fount");
     }
     if(product.inventory.quantity <= 0 || product.inventory.inStock === false){
-        throw new Error("Product is out of stock");
+        throw new Error("Insufficient quantity available in inventory");
     }
     if(product.inventory.quantity < this.quantity){
         throw new Error(`${this.quantity} in bigger than stock`);

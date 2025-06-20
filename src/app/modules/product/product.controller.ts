@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ProductServices } from "./product.service";
 import productValidation from "./product.validation";
+import { TProduct } from "./product.interface";
 
 const addProduct = async(req: Request, res: Response) =>{
     try {
@@ -13,7 +14,7 @@ const addProduct = async(req: Request, res: Response) =>{
             errors: validatedProductData.error.format(),
         });
     }
-        const result = await ProductServices.addProductInDB(validatedProductData.data);
+        const result = await ProductServices.addProductInDB(validatedProductData.data as TProduct);
         res.status(200).json({
             success: true,
             message: "Product added successfully",

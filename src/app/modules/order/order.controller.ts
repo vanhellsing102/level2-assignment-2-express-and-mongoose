@@ -1,16 +1,27 @@
-import { Request, Response } from "express"
+import { NextFunction, Request, Response } from "express"
 import { OrderServices } from "./order.service";
+import OrderValidation from "./order.validation";
+import { TOrder } from "./order.interface";
 
-const createOrder = async(req: Request, res: Response) =>{
+const createOrder = async(req: Request, res: Response, next: NextFunction) =>{
     try{
         const {order} = req.body;
-        const result = await OrderServices.createOrderInDB(order);
+        const validationOrderData = OrderValidation.safeParse(order);
+        if(!validationOrderData.success){
+            res.status(400).json({
+                success: false,
+                message: "Validation failed",
+                error: validationOrderData.error.format()
+            })
+        }
+        const result = await OrderServices.createOrderInDB(validationOrderData.data as TOrder);
         res.status(200).json({
             success: true,
             message: "Order created successfully",
             data: result
         })
     }catch(error){
+        next(error);
         res.status(500).json({
             success: false,
             message: "something went wrong",

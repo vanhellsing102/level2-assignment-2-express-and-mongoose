@@ -1,4 +1,4 @@
-import express, { Application, Request, Response } from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { ProductRoute } from "./app/modules/product/product.route";
 import { OrderRoute } from "./app/modules/order/order.route";
@@ -23,6 +23,16 @@ app.use((req: Request, res: Response) =>{
 app.get('/', (req: Request, res: Response) => {
   res.send('Level-2 assignment-2');
 })
+
+// global error handling ---------
+app.use((error: any, req: Request, res: Response, next: NextFunction) =>{
+  console.log("Global error", error);
+  res.status(500).json({
+    success: false,
+    message: error.message
+  }) 
+})
+
 
 export default app;
 

@@ -1,7 +1,6 @@
 import { model, Schema, CallbackError } from "mongoose";
 import { TOrder } from "./order.interface";
 import ProductModel from "../product/product.model";
-// import { CallbackError } from "mongoose";
 
 const orderSchema = new Schema<TOrder>({
     email: {
@@ -26,7 +25,7 @@ orderSchema.pre("save", async function(next){
     try{
         const product = await ProductModel.findById(this.productId);
     if(!product){
-        throw new Error("Product not fount");
+        throw new Error("Product not found");
     }
     if(product.inventory.quantity <= 0 || product.inventory.inStock === false){
         throw new Error("Insufficient quantity available in inventory");
@@ -51,8 +50,8 @@ orderSchema.post("save", async function(doc, next){
         if(product.inventory.quantity === 0){
             product.inventory.inStock = false
         }
-        next();
         await product.save();
+        next();
     }catch(error){
         console.log(error);
         next(error as CallbackError);
